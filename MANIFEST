@@ -22,6 +22,7 @@ t/07-test_message_sending.t
 t/07-test_muc_self_detection.t
 t/07-test_presence_and_iq.t
 t/07-test_public_api_connected.t
+t/07-test_rate_limit_sync.t
 t/07-test_reconnect_and_leaks.t
 t/07-test_reconnect_failure.t
 t/07-test_set_forum_subject.t

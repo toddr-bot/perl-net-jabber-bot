@@ -63,8 +63,16 @@ has 'ignore_self_messages'    => ( isa => $CoercedBool, is => 'rw', default => 1
 has 'auto_subscribe'          => ( isa => $CoercedBool, is => 'rw', default => 1, coerce => 1 );
 has 'forums_and_responses'    => ( isa => HashRef [ ArrayRef [Str] ], is => 'rw' );              # List of forums we're in and the strings we monitor for.
 has 'forum_join_time'         => ( isa => HashRef [Int], is => 'rw', default => sub { {} } );    # List of when we joined each forum
-has 'out_messages_per_second' => ( isa => $PosNum, is => 'rw', default => sub { 5 } );
-has 'message_delay'           => ( isa => $PosNum, is => 'rw', default => sub { 1 / 5 } );
+has 'out_messages_per_second' => (
+    isa     => $PosNum,
+    is      => 'rw',
+    default => sub { 5 },
+    trigger => sub {
+        my ( $self, $new_val ) = @_;
+        $self->message_delay( 1 / $new_val );
+    }
+);
+has 'message_delay' => ( isa => $PosNum, is => 'rw', default => sub { 1 / 5 } );
 
 has 'max_message_size'      => ( isa => $HundredInt, is => 'rw', default => 1000000 );
 has 'max_messages_per_hour' => ( isa => $PosInt,     is => 'rw', default => 1000000 );
