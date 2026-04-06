@@ -479,6 +479,38 @@ sub JoinForum {
     Time::HiRes::sleep $self->message_delay;
 }
 
+=item B<LeaveForum>
+
+Leaves a jabber forum (MUC room). Sends an unavailable presence to the room
+and removes the forum from the join-time tracker.
+
+NOTE: This does not remove the forum from C<forums_and_responses>.
+If you want the bot to stop processing messages from this forum entirely,
+also delete the forum key from C<forums_and_responses>.
+
+=cut
+
+sub LeaveForum {
+    my $self       = shift;
+    my $forum_name = shift;
+
+    if ( !$self->IsConnected ) {
+        WARN("Cannot leave forum '$forum_name': not connected");
+        return;
+    }
+
+    DEBUG( "Leaving $forum_name on " . $self->conference_server );
+
+    my $room_jid = $forum_name . '@' . $self->conference_server . '/' . $self->alias;
+    $self->jabber_client->PresenceSend(
+        to   => $room_jid,
+        type => 'unavailable',
+    );
+
+    delete $self->forum_join_time->{$forum_name};
+    return 1;
+}
+
 =item B<Process>
 
 Mostly calls it's client connection's "Process" call.
